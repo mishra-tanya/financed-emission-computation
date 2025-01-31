@@ -4,8 +4,13 @@ from rest_framework.views import APIView
 from ..serializers.user_serializers import UserRegistrationSerializer
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework.decorators import api_view
 
 # registration auth_user table + finance_profile table
+@api_view(['GET']) 
+def testing(request):
+    return Response({"message": "Yay success!"})
+
 class Register(APIView):
     def post(self, request, *args, **kwargs):
         serializer = UserRegistrationSerializer(data=request.data)

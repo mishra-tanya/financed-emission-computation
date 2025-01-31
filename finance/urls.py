@@ -1,13 +1,17 @@
 from django.urls import path
-# from finance import views
-# from . import views
+from finance.views.user_views import testing
 from .views.user_views import Register,Login,Logout
+from .views.csrf_token import get_csrf_token
 from .views.company_views import (CompanyCreate, AssetClass, LoanInvestment, EmissionFactor)
 from .views.dif_assets_view import (MotorVehicleLoan,Mortages,CommercialEstate, ProjectFinance,ListedEquity,
                                     BusinessLoan)
-                    
 urlpatterns = [
+    # csrf token
+    path("csrf-token/", get_csrf_token, name="get_csrf_token"),
+
     # authemtications
+    path('api/testing/',testing, name='test'),
+
     path('api/register/', Register.as_view(), name='register'),
     path('api/login/', Login.as_view(), name='token_obtain_pair'),
     path('api/logout/', Logout.as_view(), name='logout'),

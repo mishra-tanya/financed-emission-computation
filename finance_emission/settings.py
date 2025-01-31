@@ -13,20 +13,22 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 from pathlib import Path
 from datetime import timedelta
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
+from dotenv import load_dotenv
+import os
 
+# Load environment variables from .env file
+load_dotenv()
+BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure--h+swibceztftt0!-ya=$@@xg6g+rkh+ghi4!ap+n28#&r*nv6'
-
+SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv("DEBUG", "False") == "True"
 
-ALLOWED_HOSTS = []
-
+ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "").split(",")
 
 # Application definition
 
@@ -45,6 +47,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -52,7 +55,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
 ]
 
 ROOT_URLCONF = 'finance_emission.urls'
@@ -81,12 +83,14 @@ WSGI_APPLICATION = 'finance_emission.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',  # Use MySQL
-        'NAME': 'django_db',                  # Database name created in phpMyAdmin
-        'USER': 'root',                       # Default XAMPP MySQL username
-        'PASSWORD': '',                       # Leave empty for default XAMPP setup
-        'HOST': 'localhost',                  # Localhost
-        'PORT': '3306',     
+        'ENGINE': 'django.db.backends.mysql',  
+        'NAME': os.getenv('DATABASE_NAME'),
+        'USER': os.getenv('DATABASE_USER'),
+        'PASSWORD': os.getenv('DATABASE_PASSWORD'),
+        'HOST': os.getenv('DATABASE_HOST', 'localhost'),
+        'PORT': os.getenv('DATABASE_PORT', '3306'),
+
+     
         'OPTIONS':{
             'init_command':"SET sql_mode='STRICT_TRANS_TABLES'"
         }
@@ -137,10 +141,6 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-CORS_ORIGIN_WHITELIST = [
-    'http://localhost:5173',  # React dev server
-]
-
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',
@@ -154,4 +154,25 @@ SIMPLE_JWT = {
     'BLACKLIST_AFTER_ROTATION': True,   
     'TOKEN_BLACKLIST_ENABLED': True,
 }
- 
+
+CSRF_COOKIE_HTTPONLY = False
+
+CSRF_USE_SESSIONS = False
+
+CORS_ORIGIN_WHITELIST = os.getenv("CORS_ORIGIN_WHITELIST", "").split(",")
+
+CORS_ALLOWED_ORIGINS = os.getenv("CORS_ALLOWED_ORIGINS", "").split(",")
+
+CSRF_TRUSTED_ORIGINS =os.getenv("CSRF_TRUSTED_ORIGINS", "").split(",")
+
+CORS_ALLOW_CREDENTIALS = True
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.AllowAny',  
+    ),
+}
