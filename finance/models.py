@@ -53,7 +53,6 @@ class LoanInvestment(models.Model):
 
 class EmissionFactor(models.Model):
     user_id = models.ForeignKey(User, on_delete=models.CASCADE, related_name="emission_factors")
-    company = models.ForeignKey(Company, on_delete=models.CASCADE, related_name='emission_factors')
     asset_class = models.CharField(max_length=200)
     emission_factors = models.JSONField()
     data_quality_score = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True) 

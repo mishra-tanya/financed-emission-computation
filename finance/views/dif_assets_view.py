@@ -15,7 +15,7 @@ class MotorVehicleLoan(APIView):
 
     def post(self, request):
         request.data['user_id'] = request.user.id
-        serializer = MotorVehicleLoanSerializer(data=request.data, context=request.data.get("company") )
+        serializer = MotorVehicleLoanSerializer(data=request.data )
         if serializer.is_valid():
             saved_data = serializer.save() 
             return Response(saved_data, status=status.HTTP_201_CREATED)
@@ -27,7 +27,7 @@ class Mortages(APIView):
     
     def post(self, request):
         request.data['user_id'] = request.user.id
-        serializer = MortagesLoanSerializer(data=request.data, context=request.data.get("company") )
+        serializer = MortagesLoanSerializer(data=request.data )
         if serializer.is_valid():
             saved_data = serializer.save() 
             return Response(saved_data, status=status.HTTP_201_CREATED)
@@ -39,7 +39,7 @@ class CommercialEstate(APIView):
 
     def post(self, request):
         request.data['user_id'] = request.user.id
-        serializer = CommercialRealEstateSerializer(data=request.data, context=request.data.get("company") )
+        serializer = CommercialRealEstateSerializer(data=request.data )
         if serializer.is_valid():
             saved_data = serializer.save() 
             return Response(saved_data, status=status.HTTP_201_CREATED)
@@ -51,7 +51,7 @@ class ProjectFinance(APIView):
 
     def post(self, request):
         request.data['user_id'] = request.user.id
-        serializer = ProjectFinanceSerializer(data=request.data, context=request.data.get("company") )
+        serializer = ProjectFinanceSerializer(data=request.data)
         if serializer.is_valid():
             saved_data = serializer.save() 
             return Response(saved_data, status=status.HTTP_201_CREATED)
@@ -63,7 +63,7 @@ class ListedEquity(APIView):
 
     def post(self, request):
         request.data['user_id'] = request.user.id
-        serializer = ListedEquitySerializer(data=request.data, context=request.data.get("company") )
+        serializer = ListedEquitySerializer(data=request.data )
         if serializer.is_valid():
             saved_data = serializer.save() 
             return Response(saved_data, status=status.HTTP_201_CREATED)
@@ -75,7 +75,7 @@ class BusinessLoan(APIView):
 
     def post(self, request):
         request.data['user_id'] = request.user.id
-        serializer = BusinessLoanSerializer(data=request.data, context=request.data.get("company") )
+        serializer = BusinessLoanSerializer(data=request.data )
         if serializer.is_valid():
             saved_data = serializer.save() 
             return Response(saved_data, status=status.HTTP_201_CREATED)

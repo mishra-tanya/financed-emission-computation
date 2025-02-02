@@ -24,7 +24,6 @@ class MortgagesEmissionFactorSerializer(serializers.Serializer):
 
 
 class MortagesLoanSerializer(serializers.Serializer):
-    company = serializers.PrimaryKeyRelatedField(queryset=Company.objects.all(), required=True)
     user_id = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), required=True)
     asset_class = serializers.CharField(max_length=200)
     emission_factor = MortgagesEmissionFactorSerializer()
@@ -39,7 +38,6 @@ class MortagesLoanSerializer(serializers.Serializer):
 
     def create(self, validated_data):
         emission_factor_data = validated_data["emission_factor"]
-        company = validated_data["company"]
         user_id = validated_data["user_id"]
         outstanding_loan = emission_factor_data["outstanding_loan"]
         total_property_value = emission_factor_data["total_property_value"]
@@ -83,18 +81,15 @@ class MortagesLoanSerializer(serializers.Serializer):
 
         user = User.objects.get(id=user_id.id)
         EmissionFactor.objects.create(
-            company_id=company.id,
             user_id=user,
             asset_class=validated_data["asset_class"],
             emission_factors=emission_data,
-            data_quality_score=validated_data["data_quality_score"],
+            data_quality_score=pcaf_level,
         )
 
         response_data = {
-            "company": company.id,
-            "company_name": company.company_name,
             "asset_class": validated_data["asset_class"],
-            "data_quality_score": validated_data["data_quality_score"],
+            "data_quality_score": pcaf_level,
             "emission_factor": emission_factor_data,
             "total_emissions": float(total_emissions),
             "financed_emissions": float(financed_emissions),

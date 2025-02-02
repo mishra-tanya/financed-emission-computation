@@ -7,7 +7,7 @@ class ProjectFinanceDetailsSerializer(serializers.Serializer):
     project_name = serializers.CharField(max_length=200)
     outstanding_loan = serializers.DecimalField(max_digits=15, decimal_places=2)
     total_project_cost = serializers.DecimalField(max_digits=15, decimal_places=2)
-    project_phase = serializers.ChoiceField(choices=[('Construction', 'Construction'), ('Operational', 'Operational')])
+    project_phase = serializers.CharField(max_length=200)
     reported_emissions = serializers.DecimalField(max_digits=15, decimal_places=2, required=False, allow_null=True)
     activity_data = serializers.DecimalField(max_digits=15, decimal_places=2, required=False, allow_null=True)
     emission_factor = serializers.DecimalField(max_digits=15, decimal_places=4, required=False, allow_null=True)
@@ -23,10 +23,6 @@ class ProjectFinanceDetailsSerializer(serializers.Serializer):
 
 
 class ProjectFinanceSerializer(serializers.Serializer):
-    company = serializers.PrimaryKeyRelatedField(
-        queryset=Company.objects.all(),
-        required=True
-    )
     user_id = serializers.PrimaryKeyRelatedField(
         queryset=User.objects.all(),
         required=True
@@ -50,7 +46,6 @@ class ProjectFinanceSerializer(serializers.Serializer):
         emission_factor = emission_factor_data.get("emission_factor")
         reported_emissions = emission_factor_data.get("reported_emissions")
         project_phase = emission_factor_data["project_phase"]
-        company = validated_data["company"]
         user_id = validated_data["user_id"]
 
         if reported_emissions is not None:
@@ -74,30 +69,26 @@ class ProjectFinanceSerializer(serializers.Serializer):
             "reported_emissions": float(reported_emissions) if reported_emissions is not None else 0.0,
             "activity_data": float(activity_data) if activity_data is not None else 0.0,
             "emission_factor": float(emission_factor) if emission_factor is not None else None,
-            "total_emissions": float(total_emissions),
-            "financed_emissions": float(financed_emissions),
+            "total_emissions": round(float(total_emissions),4),
+            "financed_emissions": round(float(financed_emissions),4),
             "pcaf_level": data_quality_score,
         }
 
 
         user = User.objects.get(id=user_id.id)
         EmissionFactor.objects.create(
-            company_id=company.id,
             user_id=user,
             asset_class=validated_data["asset_class"],
             emission_factors=emission_data,
-            data_quality_score=validated_data["data_quality_score"],
+            data_quality_score=data_quality_score,
         )
 
         response_data = {
-            "company": company.id,
-            "company_name": company.company_name,
             "asset_class": validated_data["asset_class"],
-            "data_quality_score": validated_data["data_quality_score"],
             "emission_factor": emission_factor_data,
-            "total_emissions": float(total_emissions),
-            "financed_emissions": float(financed_emissions),
-            "pcaf_level": data_quality_score,
+            "total_emissions": round(float(total_emissions),4),
+            "financed_emissions": round(float(financed_emissions),4),
+            "data_quality_score": data_quality_score,
         }
 
         return response_data

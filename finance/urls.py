@@ -7,7 +7,7 @@ from .views.dif_assets_view import (MotorVehicleLoan,Mortages,CommercialEstate, 
                                     BusinessLoan)
 urlpatterns = [
     # csrf token
-    path("csrf-token/", get_csrf_token, name="get_csrf_token"),
+    path("api/csrf-token/", get_csrf_token, name="get_csrf_token"),
 
     # authemtications
     path('api/testing/',testing, name='test'),

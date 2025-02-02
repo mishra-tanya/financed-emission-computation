@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
-from ..models import  Company, EmissionFactor
+from ..models import EmissionFactor
 
 # motor vehicle
 class MotorEmissionFactorDetailsSerializer(serializers.Serializer):
@@ -22,10 +22,6 @@ class MotorEmissionFactorDetailsSerializer(serializers.Serializer):
 
 
 class MotorVehicleLoanSerializer(serializers.Serializer):
-    company = serializers.PrimaryKeyRelatedField(
-        queryset=Company.objects.all(), 
-        required=True
-    )
     user_id = serializers.PrimaryKeyRelatedField(
         queryset=User.objects.all(),
         required=True
@@ -43,7 +39,6 @@ class MotorVehicleLoanSerializer(serializers.Serializer):
 
     def create(self, validated_data):
         emission_factor_data = validated_data["emission_factor"]
-        company = validated_data["company"]
         user_id = validated_data["user_id"]
         outstanding_loan = emission_factor_data["outstanding_loan"]
         total_vehicle_cost = emission_factor_data["total_vehicle_cost"]
@@ -75,26 +70,23 @@ class MotorVehicleLoanSerializer(serializers.Serializer):
             "vehicle_type": emission_factor_data["vehicle_type"],
             "annual_fuel_consumption": float(annual_fuel_consumption) if annual_fuel_consumption else None,
             "emission_factor": float(emission_factor) if emission_factor else None,
-            "total_emissions": float(total_emissions),
-            "financed_emissions": float(financed_emissions),
+            "total_emissions": round(float(total_emissions), 4),
+            "financed_emissions": round(float(financed_emissions), 4),
             "pcaf_level": pcaf_level,
         }
         user = User.objects.get(id=user_id.id)
         EmissionFactor.objects.create(
-            company_id=company.id,
             user_id=user,
             asset_class=validated_data["asset_class"],
             emission_factors=emission_data,
-            data_quality_score=validated_data["data_quality_score"],
+            data_quality_score=pcaf_level
         )
         response_data = {
-            "company": company.id,   
-            "company_name": company.company_name,   
             "asset_class": validated_data["asset_class"],
-            "data_quality_score": validated_data["data_quality_score"],
+            "data_quality_score": pcaf_level,
             "emission_factor": emission_factor_data,
-            "total_emissions": float(total_emissions),
-            "financed_emissions": float(financed_emissions),
+            "total_emissions": round(float(total_emissions),4),
+            "financed_emissions": round(float(financed_emissions),4),
         }
 
         return response_data

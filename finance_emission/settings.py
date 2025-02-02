@@ -157,22 +157,28 @@ SIMPLE_JWT = {
 
 CSRF_COOKIE_HTTPONLY = False
 
-CSRF_USE_SESSIONS = False
+CSRF_USE_SESSIONS = True
 
 CORS_ORIGIN_WHITELIST = os.getenv("CORS_ORIGIN_WHITELIST", "").split(",")
 
-CORS_ALLOWED_ORIGINS = os.getenv("CORS_ALLOWED_ORIGINS", "").split(",")
-
-CSRF_TRUSTED_ORIGINS =os.getenv("CSRF_TRUSTED_ORIGINS", "").split(",")
-
+# CORS_ALLOWED_ORIGINS = os.getenv("CORS_ALLOWED_ORIGINS", "").split(",")
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173",  # Ensure this is correct for your frontend
+]
 CORS_ALLOW_CREDENTIALS = True
-
+CSRF_TRUSTED_ORIGINS =os.getenv("CSRF_TRUSTED_ORIGINS", "").split(",")
+# CORS_ALLOW_CREDENTIALS = True
+CSRF_COOKIE_NAME = "csrftoken"
+CSRF_COOKIE_SECURE = False  
+CSRF_COOKIE_SAMESITE = "None" 
 REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': (
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.BasicAuthentication',
-    ),
-    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.authentication.TokenAuthentication',
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.AllowAny',  
-    ),
+    ],
 }
