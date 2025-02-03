@@ -84,11 +84,17 @@ class ProjectFinanceSerializer(serializers.Serializer):
         )
 
         response_data = {
-            "asset_class": validated_data["asset_class"],
-            "emission_factor": emission_factor_data,
-            "total_emissions": round(float(total_emissions),4),
             "financed_emissions": round(float(financed_emissions),4),
+            "total_emissions": round(float(total_emissions),4),
             "data_quality_score": data_quality_score,
+
+           "project_name": emission_factor_data["project_name"],
+            "outstanding_loan": float(outstanding_loan),
+            "total_project_cost": float(total_project_cost),
+            "project_phase": project_phase,
+            "reported_emissions": float(reported_emissions) if reported_emissions is not None else 0.0,
+            "activity_data": float(activity_data) if activity_data is not None else 0.0,
+            "emission_factor": float(emission_factor) if emission_factor is not None else None,
         }
 
         return response_data

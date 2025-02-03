@@ -82,11 +82,16 @@ class MotorVehicleLoanSerializer(serializers.Serializer):
             data_quality_score=pcaf_level
         )
         response_data = {
-            "asset_class": validated_data["asset_class"],
-            "data_quality_score": pcaf_level,
-            "emission_factor": emission_factor_data,
-            "total_emissions": round(float(total_emissions),4),
             "financed_emissions": round(float(financed_emissions),4),
+            "total_emissions": round(float(total_emissions),4),
+            "data_quality_score": pcaf_level,
+            
+           "vehicle_name": emission_factor_data["vehicle_name"],
+            "outstanding_loan": float(outstanding_loan),
+            "total_vehicle_cost": float(total_vehicle_cost),
+            "vehicle_type": emission_factor_data["vehicle_type"],
+            "annual_fuel_consumption": float(annual_fuel_consumption) if annual_fuel_consumption else None,
+            "emission_factor": float(emission_factor) if emission_factor else None,
         }
 
         return response_data

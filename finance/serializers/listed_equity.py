@@ -73,7 +73,8 @@ class ListedEquitySerializer(serializers.Serializer):
             "sector":sector,
             "reported_emissions": float(reported_emissions) if reported_emissions is not None else 0.0,
             "revenue": float(revenue) if revenue is not None else 0.0,
-            "financed_emissions": float(financed_emissions),
+            "total_emissions": round(float(total_emissions),4),
+            "financed_emissions": round(float(financed_emissions),4),
             "pcaf_level": data_quality_score,
         }
 
@@ -87,10 +88,18 @@ class ListedEquitySerializer(serializers.Serializer):
         )
 
         response_data = {
-            "asset_class": validated_data["asset_class"],
-            "emission_factor": emission_factor_data,
-            "financed_emissions": float(financed_emissions),
+            "financed_emissions": round(float(financed_emissions),4),
+            "total_emissions": round(float(total_emissions),4),
             "data_quality_score": data_quality_score,
+            
+            "company_name": emission_factor_data["company_name"],
+            "outstanding_loan": float(outstanding_loan),
+            "evic": float(evic),
+            "geography": geography,
+            "sector":sector,
+            "reported_emissions": float(reported_emissions) if reported_emissions is not None else 0.0,
+            "revenue": float(revenue) if revenue is not None else 0.0,
+          
         }
 
         return response_data

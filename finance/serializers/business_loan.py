@@ -64,6 +64,7 @@ class BusinessLoanSerializer(serializers.Serializer):
             data_quality_score = 3
         else:
             benchmark_emissions = 0.233
+            total_emissions = float(benchmark_emissions) 
             financed_emissions = float(benchmark_emissions) 
             data_quality_score = 4
 
@@ -77,7 +78,8 @@ class BusinessLoanSerializer(serializers.Serializer):
             "reported_emissions": float(reported_emissions) if reported_emissions is not None else 0.0,
             "physical_activity_data": float(physical_activity_data) if physical_activity_data is not None else 0.0,
             "borrower_revenue": float(borrower_revenue) if borrower_revenue is not None else 0.0,
-            "financed_emissions": float(financed_emissions),
+            "financed_emissions": round(float(financed_emissions),4),
+            "total_emissions": round(float(total_emissions),4),
             "pcaf_level": data_quality_score,
         }
 
@@ -91,10 +93,19 @@ class BusinessLoanSerializer(serializers.Serializer):
         )
 
         response_data = {
-            "asset_class": validated_data["asset_class"],
-            "emission_factor": emission_factor_data,
-            "financed_emissions": float(financed_emissions),
+            "financed_emissions": round(float(financed_emissions),4),
+            "total_emissions": round(float(total_emissions),4),
             "data_quality_score": data_quality_score,
+            
+            "asset_class": validated_data["asset_class"],
+            "borrower_name": emission_factor_data["borrower_name"],
+            "outstanding_loan": float(outstanding_loan),
+            "borrower_total_value": float(borrower_total_value),
+            "borrower_revenue": float(borrower_revenue) if borrower_revenue is not None else 0.0,
+            "borrower_region": borrower_region,
+            "borrower_industry_sector":borrower_industry_sector,
+            "reported_emissions": float(reported_emissions) if reported_emissions is not None else 0.0,
+            "physical_activity_data": float(physical_activity_data) if physical_activity_data is not None else 0.0,
         }
 
         return response_data

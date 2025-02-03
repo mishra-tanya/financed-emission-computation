@@ -72,8 +72,8 @@ class CommercialRealEstateSerializer(serializers.Serializer):
             "floor_area": float(floor_area),
             "energy_consumption": float(energy_consumption) if energy_consumption else None,
             "emission_factor": float(emission_factor) if emission_factor else None,
-            "total_emissions": float(total_emissions),
-            "financed_emissions": float(financed_emissions),
+            "total_emissions": round(float(total_emissions),4),
+            "financed_emissions": round(float(financed_emissions),4),
             "pcaf_level": pcaf_level,
         }
 
@@ -86,11 +86,16 @@ class CommercialRealEstateSerializer(serializers.Serializer):
         )
 
         response_data = {
-            "asset_class": validated_data["asset_class"],
-            "emission_factor": emission_factor_data,
-            "total_emissions": float(total_emissions),
-            "financed_emissions": float(financed_emissions),
+            "financed_emissions": round(float(financed_emissions),4),
+            "total_emissions": round(float(total_emissions),4),
             "data_quality_score": pcaf_level,
+            
+            "building_name": emission_factor_data["building_name"],
+            "outstanding_loan": float(outstanding_loan),
+            "total_property_value": float(total_property_value),
+            "floor_area": float(floor_area),
+            "energy_consumption": float(energy_consumption) if energy_consumption else None,
+            "emission_factor": float(emission_factor) if emission_factor else None,
         }
 
         return response_data
