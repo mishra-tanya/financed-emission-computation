@@ -86,6 +86,7 @@ class MotorVehicleLoanSerializer(serializers.Serializer):
             "total_emissions": round(float(total_emissions),4),
             "data_quality_score": pcaf_level,
             
+            "asset_class":validated_data["asset_class"],
            "vehicle_name": emission_factor_data["vehicle_name"],
             "outstanding_loan": float(outstanding_loan),
             "total_vehicle_cost": float(total_vehicle_cost),

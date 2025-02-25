@@ -87,7 +87,8 @@ class ProjectFinanceSerializer(serializers.Serializer):
             "financed_emissions": round(float(financed_emissions),4),
             "total_emissions": round(float(total_emissions),4),
             "data_quality_score": data_quality_score,
-
+            
+            "asset_class":validated_data["asset_class"],
            "project_name": emission_factor_data["project_name"],
             "outstanding_loan": float(outstanding_loan),
             "total_project_cost": float(total_project_cost),
