@@ -90,6 +90,8 @@ class CommercialRealEstateSerializer(serializers.Serializer):
             "total_emissions": round(float(total_emissions),4),
             "data_quality_score": pcaf_level,
             
+            "asset_class":validated_data["asset_class"],
+            
             "building_name": emission_factor_data["building_name"],
             "outstanding_loan": float(outstanding_loan),
             "total_property_value": float(total_property_value),
