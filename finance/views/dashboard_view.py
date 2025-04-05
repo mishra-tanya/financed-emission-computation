@@ -47,16 +47,16 @@ class AssetFinanceEmission(APIView):
             asset_class = ef.asset_class
             project_name = next((emission_data.get(key) for key in possible_keys if key in emission_data), "Unknown")
 
-            financed_emissions = emission_data.get("financed_emissions", 0)  
+            financed_emissions_1 = emission_data.get("financed_emissions_1", 0)  
 
             all_data.append({
                 "asset_class": asset_class,
                 "project_name": project_name,
-                "financed_emissions": financed_emissions,
+                "financed_emissions_1": financed_emissions_1,
             })
 
-        top_5_data = sorted(all_data, key=lambda x: x["financed_emissions"], reverse=True)[:5]
-
+        top_5_data = sorted(all_data, key=lambda x: x["financed_emissions_1"], reverse=True)[:5]
+        print(top_5_data)
         return Response(top_5_data)
 
 
@@ -72,10 +72,11 @@ class TotalFinanceEmission(APIView):
         for ef in emission_factors:
             emission_data = ef.emission_factors  
             total_financed_emissions=0
-            financed_emissions = emission_data.get("financed_emissions", 0)  
+            financed_emissions_1 = emission_data.get("financed_emissions_1", 0)  
+            financed_emissions_2 = emission_data.get("financed_emissions_2", 0)  
             
-            total_financed_emissions=total_financed_emissions+financed_emissions
-
+            total_financed_emissions= float(financed_emissions_2 )+ float(financed_emissions_1)
+            print(total_financed_emissions)
         return Response({"total_financed_emissions":total_financed_emissions})
 
 # 4.asset class grouped 
@@ -92,11 +93,11 @@ class TotalFinanceEmissionByAssetClass(APIView):
         for ef in emission_factors:
             emission_data = ef.emission_factors
             asset_class = ef.asset_class 
-            financed_emissions = emission_data.get("financed_emissions", 0)  
+            financed_emissions = emission_data.get("financed_emissions_1", 0)  
 
             if asset_class not in emissions_by_asset_class:
                 emissions_by_asset_class[asset_class] = 0
-            emissions_by_asset_class[asset_class] += financed_emissions
+            emissions_by_asset_class[asset_class] += float(financed_emissions)
 
         return Response(emissions_by_asset_class)
 
