@@ -2,13 +2,13 @@ from ..helpers.emissions import EmissionCalculator
 from ..models import EmissionFactor
 from django.contrib.auth.models import User
 
-class BusinessLoanService:
+class ListedEquityService:
     def __init__(self, validated_data):
         self.validated_data=validated_data
         self.emission_factor_data= validated_data["emission_factor"]
         self.calculator=EmissionCalculator(
             self.emission_factor_data["outstanding_loan"],
-            self.emission_factor_data["borrower_total_value"]
+            self.emission_factor_data["evic"]
         )
 
     def process(self):
@@ -19,36 +19,30 @@ class BusinessLoanService:
     def compute_emission(self):
         ef=self.emission_factor_data
         format=self.calculator.format_or_na
+        print("hi", ef.get("geography"),
+            ef["sector"])
         asset_emission_1, asset_emission_2 = self.calculator.assetbased(
-            ef.get("borrower_region"),
-            ef["borrower_industry_sector"]
+            ef.get("geography"),
+            ef["sector"]
             )
         production_emission_1, production_emission_2 = self.calculator.production_based(
-            ef.get("borrower_region"),
-            ef["borrower_industry_sector"],
+            ef.get("geography"),
+            ef["sector"],
             ef.get("production_quantity_1")
             )
         revenue_emission_1, revenue_emission_2 = self.calculator.revenue_based(
-            ef.get("borrower_region"),
-            ef["borrower_industry_sector"],
+            ef.get("geography"),
+            ef["sector"],
             ef.get("revenue_emission_1")
             )
-        
-        fuel_emission_1, fuel_emission_2 = self.calculator.fuel_emission(
-            [ef.get("fuel_1"), ef.get("fuel_2"), ef.get("fuel_3")],
-            [ef.get("fuel_quantity_amount_1"), ef.get("fuel_quantity_amount_2"), ef.get("fuel_quantity_amount_3")],
-            ef["borrower_region"]
-        )
-
-        
         print(ef)
         return {
-            "heading1":"Borrowers Details",
-            "borrower_name": ef["borrower_name"],
+            "heading1":"General Details",
+            "company_name": ef["company_name"],
             "outstanding_loan": float(ef["outstanding_loan"]),
-            "borrower_total_value": float(ef["borrower_total_value"]),
-            "borrower_region": ef["borrower_region"],
-            "borrower_industry_sector": ef["borrower_industry_sector"],
+            "evic": float(ef["evic"]),
+            "geography": ef["geography"],
+            "sector": ef["sector"],
             "asset_class": self.validated_data["asset_class"],
 
             "heading2":"Entered Data",
@@ -57,13 +51,13 @@ class BusinessLoanService:
             "reported_emissions_2": float(ef.get("reported_emissions_2") or 0),
             
             "fuel_quantity_amount_1" :ef.get("fuel_quantity_amount_1") or "N/A",
-            "fuel_1_coal": float(ef.get("fuel_1") or 0),
+            "fuel_1": float(ef.get("fuel_1") or 0),
 
             "fuel_quantity_amount_2":ef.get("fuel_quantity_amount_2") or "N/A",
-            "fuel_2_natural_gas": float(ef.get("fuel_2") or 0),
+            "fuel_2": float(ef.get("fuel_2") or 0),
 
             "fuel_quantity_amount_3":ef.get("fuel_quantity_amount_3") or "N/A",
-            "fuel_3_diesel": float(ef.get("fuel_3") or 0),
+            "fuel_3": float(ef.get("fuel_3") or 0),
 
             "electricity_quantity_amount":ef.get("electricity_quantity_amount") or "N/A",
             "electricity": float(ef.get("electricity") or 0),
@@ -77,10 +71,13 @@ class BusinessLoanService:
             "declared_emission_scope_2": format(self.calculator.financed_emission(ef.get("reported_emissions_2"))),
 
             "heading5":"Fuel / Electricity Based Emission",
-            "fuel_emission_scope_1": format(fuel_emission_1),
-            "fuel_emission_scope_2": format(fuel_emission_2),
+            "fuel_emission_scope_1": format(self.calculator.fuel_emission(
+                [ef.get("fuel_1"), ef.get("fuel_2"), ef.get("fuel_3")],
+                [ef.get("fuel_quantity_amount_1"), ef.get("fuel_quantity_amount_2"), ef.get("fuel_quantity_amount_3")],
+                 ef["geography"]
+            )),
 
-            "electricity_emission_scope_2": format(self.calculator.electricity_emission(ef.get("electricity"), ef["electricity_quantity_amount"], ef["borrower_region"])),
+            "electricity_emission_scope_2": format(self.calculator.electricity_emission(ef.get("electricity"), ef["electricity_quantity_amount"], ef["geography"])),
             
             "heading6":"Production Based Emission",
             "production_emission_scope_1": format(production_emission_1),

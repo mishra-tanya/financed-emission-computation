@@ -55,7 +55,7 @@ class AssetFinanceEmission(APIView):
                 "financed_emissions_1": financed_emissions_1,
             })
 
-        top_5_data = sorted(all_data, key=lambda x: x["financed_emissions_1"], reverse=True)[:5]
+        top_5_data = sorted(all_data, key=lambda x: float(x["financed_emissions_1"]), reverse=True)[:5]
         print(top_5_data)
         return Response(top_5_data)
 

@@ -10,7 +10,6 @@ class BusinessLoanDetailsSerializer(serializers.Serializer):
     outstanding_loan = serializers.DecimalField(max_digits=15, decimal_places=2)
     borrower_total_value = serializers.DecimalField(max_digits=15, decimal_places=2)
     borrower_industry_sector = serializers.CharField(max_length=200)
-    borrower_revenue = serializers.DecimalField(max_digits=15, decimal_places=2, required=False, allow_null=True)
     borrower_region = serializers.CharField(max_length=200)
 
     # reported esmission (optional)
@@ -31,11 +30,9 @@ class BusinessLoanDetailsSerializer(serializers.Serializer):
 
     # production emission (optional)
     production_quantity_1 = serializers.DecimalField(max_digits=15, decimal_places=2, required=False, allow_null=True)
-    production_quantity_2 = serializers.DecimalField(max_digits=15, decimal_places=2, required=False, allow_null=True)
 
     # revenue emission (optional)
     revenue_emission_1 = serializers.DecimalField(max_digits=15, decimal_places=2, required=False, allow_null=True)
-    revenue_emission_2 = serializers.DecimalField(max_digits=15, decimal_places=2, required=False, allow_null=True)
 
     # asset emission (optional)
     asset_emission = serializers.DecimalField(max_digits=15, decimal_places=2, required=False, allow_null=True)
