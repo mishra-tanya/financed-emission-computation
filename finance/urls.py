@@ -6,7 +6,7 @@ from .views.company_views import (CompanyCreate, AssetClass, LoanInvestment, Emi
 from .views.dif_assets_view import (MotorVehicleLoan,Mortages,CommercialEstate, ProjectFinance,ListedEquity,
                                     BusinessLoan)
 from .views.dashboard_view import (TopOutstandingLoansView, AssetFinanceEmission, TotalFinanceEmission,
-                                   TotalFinanceEmissionByAssetClass, WeightedDataQualityScore)
+                                   TotalFinanceEmissionByAssetClass, WeightedDataQualityScore, EmissionFactorListView)
 
 urlpatterns = [
     # csrf token
@@ -39,5 +39,7 @@ urlpatterns = [
     path('api/total-finance-emission/', TotalFinanceEmission.as_view(), name='TotalFinanceEmission'),
     path('api/grouped-finance-emission/', TotalFinanceEmissionByAssetClass.as_view(), name='TotalFinanceEmissionByAssetClass'),
     path('api/average-data-quality/', WeightedDataQualityScore.as_view(), name='WeightedDataQualityScore'),
+    path('api/emission-data/', EmissionFactorListView.as_view(), name='EmissionFactorListView'),
+
 
 ]

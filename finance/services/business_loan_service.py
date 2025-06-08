@@ -4,17 +4,34 @@ from django.contrib.auth.models import User
 
 class BusinessLoanService:
     def __init__(self, validated_data):
-        self.validated_data=validated_data
-        self.emission_factor_data= validated_data["emission_factor"]
-        self.calculator=EmissionCalculator(
+        self.validated_data = validated_data
+        self.emission_factor_data = validated_data["emission_factor"]
+        self.user = validated_data["user_id"]
+        self.asset_class = validated_data["asset_class"]
+        self.calculator = EmissionCalculator(
             self.emission_factor_data["outstanding_loan"],
             self.emission_factor_data["borrower_total_value"]
         )
 
     def process(self):
-        data=self.compute_emission()
+        data = self.compute_emission()
         self.save_emission_data(data)
         return data
+
+    def determine_data_quality_score(self):
+        ef = self.emission_factor_data
+
+        # Priority: reported → fuel → production → revenue → none
+        if ef.get("reported_emissions_1") is not None or ef.get("reported_emissions_2") is not None:
+            return 1
+        elif ef.get("coal") or ef.get("natural_gas") or ef.get("diesel"):
+            return 2
+        elif ef.get("production_quantity_1"):
+            return 3
+        elif ef.get("revenue_emission_1"):
+            return 4
+        else:
+            return 5
     
     def compute_emission(self):
         ef=self.emission_factor_data
@@ -35,8 +52,8 @@ class BusinessLoanService:
             )
         
         fuel_emission_1, fuel_emission_2 = self.calculator.fuel_emission(
-            [ef.get("fuel_1"), ef.get("fuel_2"), ef.get("fuel_3")],
-            [ef.get("fuel_quantity_amount_1"), ef.get("fuel_quantity_amount_2"), ef.get("fuel_quantity_amount_3")],
+            [ef.get("coal"), ef.get("natural_gas"), ef.get("diesel")],
+            [ef.get("coal_quantity_amount"), ef.get("natural_gas_quantity_amount"), ef.get("diesel_quantity_amount")],
             ef["borrower_region"]
         )
 
@@ -56,14 +73,14 @@ class BusinessLoanService:
             "reported_emissions_1": float(ef.get("reported_emissions_1") or 0),
             "reported_emissions_2": float(ef.get("reported_emissions_2") or 0),
             
-            "fuel_quantity_amount_1" :ef.get("fuel_quantity_amount_1") or "N/A",
-            "fuel_1_coal": float(ef.get("fuel_1") or 0),
+            "coal_quantity_amount" :ef.get("coal_quantity_amount") or "N/A",
+            "coal": float(ef.get("coal") or 0),
 
-            "fuel_quantity_amount_2":ef.get("fuel_quantity_amount_2") or "N/A",
-            "fuel_2_natural_gas": float(ef.get("fuel_2") or 0),
+            "natural_gas_quantity_amount":ef.get("natural_gas_quantity_amount") or "N/A",
+            "natural_gas": float(ef.get("natural_gas") or 0),
 
-            "fuel_quantity_amount_3":ef.get("fuel_quantity_amount_3") or "N/A",
-            "fuel_3_diesel": float(ef.get("fuel_3") or 0),
+            "diesel_quantity_amount":ef.get("diesel_quantity_amount") or "N/A",
+            "diesel": float(ef.get("diesel") or 0),
 
             "electricity_quantity_amount":ef.get("electricity_quantity_amount") or "N/A",
             "electricity": float(ef.get("electricity") or 0),
@@ -78,7 +95,7 @@ class BusinessLoanService:
 
             "heading5":"Fuel / Electricity Based Emission",
             "fuel_emission_scope_1": format(fuel_emission_1),
-            "fuel_emission_scope_2": format(fuel_emission_2),
+            # "fuel_emission_scope_2": format(fuel_emission_2),
 
             "electricity_emission_scope_2": format(self.calculator.electricity_emission(ef.get("electricity"), ef["electricity_quantity_amount"], ef["borrower_region"])),
             
@@ -101,5 +118,5 @@ class BusinessLoanService:
             user_id=User.objects.get(id=self.validated_data["user_id"].id),
             asset_class=self.validated_data["asset_class"],
             emission_factors=data,
-            data_quality_score=self.validated_data["data_quality_score"],
+            data_quality_score=self.determine_data_quality_score(),
         )

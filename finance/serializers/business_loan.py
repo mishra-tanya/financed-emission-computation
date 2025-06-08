@@ -17,12 +17,12 @@ class BusinessLoanDetailsSerializer(serializers.Serializer):
     reported_emissions_2 = serializers.DecimalField(max_digits=15, decimal_places=2, required=False, allow_null=True)
 
     # fuel based (optional)
-    fuel_quantity_amount_1 = serializers.CharField(max_length=200, required=False, allow_null=True, allow_blank=True)
-    fuel_1 = serializers.DecimalField(max_digits=15, decimal_places=2, required=False, allow_null=True)
-    fuel_quantity_amount_2 = serializers.CharField(max_length=200, required=False, allow_null=True, allow_blank=True)
-    fuel_2 = serializers.DecimalField(max_digits=15, decimal_places=2, required=False, allow_null=True)
-    fuel_quantity_amount_3 = serializers.CharField(max_length=200, required=False, allow_null=True, allow_blank=True)
-    fuel_3 = serializers.DecimalField(max_digits=15, decimal_places=2, required=False, allow_null=True)
+    coal_quantity_amount = serializers.CharField(max_length=200, required=False, allow_null=True, allow_blank=True)
+    coal = serializers.DecimalField(max_digits=15, decimal_places=2, required=False, allow_null=True)
+    natural_gas_quantity_amount = serializers.CharField(max_length=200, required=False, allow_null=True, allow_blank=True)
+    natural_gas = serializers.DecimalField(max_digits=15, decimal_places=2, required=False, allow_null=True)
+    diesel_quantity_amount = serializers.CharField(max_length=200, required=False, allow_null=True, allow_blank=True)
+    diesel = serializers.DecimalField(max_digits=15, decimal_places=2, required=False, allow_null=True)
 
     # elecctrivity (optional)
     electricity_quantity_amount = serializers.CharField(max_length=200, required=False, allow_null=True, allow_blank=True)

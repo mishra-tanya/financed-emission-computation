@@ -59,5 +59,5 @@ class EmissionFactor(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"Emission factor for {self.company.company_name} (User ID: {self.company.user_id.id})"
+        return f"Emission factor for {self.emission_factors} (User ID: {self.user_id})"
 
