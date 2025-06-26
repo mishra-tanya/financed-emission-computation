@@ -57,37 +57,42 @@ class BusinessLoanService:
             ef["borrower_region"]
         )
 
-        
+        coal_unit = "tonne" if ef.get("coal_quantity_amount")=="Quantity" else "USD"
+        natural_gas_unit = "cf" if ef.get("natural_gas_quantity_amount")=="Quantity" else "USD"
+        diesel_unit = "liters" if ef.get("diesel_quantity_amount")=="Quantity" else "USD"
+        electricity_unit = "kWh" if ef.get("electricity_quantity_amount")=="Quantity" else "USD"
+        production_unit = self.calculator.get_production_unit(ef["borrower_industry_sector"]) or "N/A"
+
         print(ef)
         return {
             "heading1":"Borrowers Details",
             "borrower_name": ef["borrower_name"],
-            "outstanding_loan": float(ef["outstanding_loan"]),
-            "borrower_total_value": float(ef["borrower_total_value"]),
+            "outstanding_loan_EUR_Million": float(ef["outstanding_loan"]),
+            "borrower_enterprise_value_(EUR_Million)": float(ef["borrower_total_value"]),
             "borrower_region": ef["borrower_region"],
             "borrower_industry_sector": ef["borrower_industry_sector"],
             "asset_class": self.validated_data["asset_class"],
 
             "heading2":"Entered Data",
             
-            "reported_emissions_1": float(ef.get("reported_emissions_1") or 0),
-            "reported_emissions_2": float(ef.get("reported_emissions_2") or 0),
+            "reported_emissions_1_(kg CO₂ equivalent)": float(ef.get("reported_emissions_1") or 0),
+            "reported_emissions_2_(kg CO₂ equivalent)": float(ef.get("reported_emissions_2") or 0),
             
-            "coal_quantity_amount" :ef.get("coal_quantity_amount") or "N/A",
-            "coal": float(ef.get("coal") or 0),
+            "coal_quantity_amount": ef.get("coal_quantity_amount") or "N/A",
+            f"coal_({coal_unit})": float(ef.get("coal") or 0),
 
-            "natural_gas_quantity_amount":ef.get("natural_gas_quantity_amount") or "N/A",
-            "natural_gas": float(ef.get("natural_gas") or 0),
+            "natural_gas_quantity_amount": ef.get("natural_gas_quantity_amount") or "N/A",
+            f"natural_gas_({natural_gas_unit})": float(ef.get("natural_gas") or 0),
 
-            "diesel_quantity_amount":ef.get("diesel_quantity_amount") or "N/A",
-            "diesel": float(ef.get("diesel") or 0),
+            "diesel_quantity_amount": ef.get("diesel_quantity_amount") or "N/A",
+            f"diesel_({diesel_unit})": float(ef.get("diesel") or 0),
 
-            "electricity_quantity_amount":ef.get("electricity_quantity_amount") or "N/A",
-            "electricity": float(ef.get("electricity") or 0),
+            "electricity_quantity_amount": ef.get("electricity_quantity_amount") or "N/A",
+            f"electricity_({electricity_unit})": float(ef.get("electricity") or 0),
 
-            "production_quantity_1": float(ef.get("production_quantity_1") or 0),
+            f"production_quantity_({production_unit})": float(ef.get("production_quantity_1") or 0),
 
-            "revenue_emission_1": float(ef.get("revenue_emission_1") or 0),
+            "revenue_emission_(EUR_Million)": float(ef.get("revenue_emission_1") or 0),
 
             "heading4":"Declared Emission",
             "declared_emission_scope_1": format(self.calculator.financed_emission(ef.get("reported_emissions_1"))),

@@ -136,3 +136,27 @@ class EmissionCalculator:
             emission_2 = self.financed_emission(float(sector_data[1])*float(region_data[0])* float(revenue_emission_1))
 
         return emission_1, emission_2
+
+    def get_production_unit(self, sector):
+        sector = sector.strip()
+        units = {
+            "Steel": "tonne",
+            "Aluminium": "tonne",
+            "Coal_Mining": "tonne",
+            "Cement": "tonne",
+            "Basic_Chemicals": "tonne",
+            "Food_Processing": "tonne",
+            "Textiles": "tonne",
+            "Pharmaceuticals": "tonne",
+            "Agriculture": "tonne",
+            "Oil_Gas_Extraction": "barrel",
+            "Electric_Power_Generation": "MWh",
+            "Solar_Manufacturing": "MW_capacity",
+            "Wind_Manufacturing": "MW_capacity",
+            "Automotive": "vehicle",
+            "Aviation": "aircraft",
+            "Shipping": "vessel",
+            "Construction": "m2_floor_area",
+            "Forestry": "cubic_meter",
+        }
+        return units.get(sector)
